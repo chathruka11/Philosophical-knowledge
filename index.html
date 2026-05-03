@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusa Omni - Infinity Intelligence</title>
+    <title>Pusa Omni - Fixed Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -23,11 +23,10 @@
 
     <div id="sidebar" class="sidebar p-4 flex flex-col">
         <div class="flex justify-between items-center mb-6">
-            <span class="font-bold text-blue-500">HISTORY</span>
+            <span class="font-bold text-blue-500 tracking-widest">CHATS</span>
             <button onclick="toggleSidebar()" class="text-white"><i class="fas fa-times text-xl"></i></button>
         </div>
         <button onclick="newChat()" class="w-full border border-gray-600 p-3 rounded-xl mb-4 hover:bg-gray-800 transition font-bold">+ NEW CHAT</button>
-        <div class="font-bold text-[10px] text-gray-500 mb-2 uppercase tracking-widest">පරණ චැට්</div>
         <div id="historyList" class="overflow-y-auto flex-1"></div>
     </div>
 
@@ -35,7 +34,7 @@
         <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center">
             <button onclick="toggleSidebar()" class="text-blue-500 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800"><i class="fas fa-bars text-xl"></i></button>
             <div class="text-center">
-                <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-white text-[10px] bg-red-600 px-1 rounded animate-pulse">LIVE</span></h1>
+                <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-white text-[10px] bg-red-600 px-1 rounded animate-pulse">FIXED</span></h1>
                 <p id="clock" class="text-[9px] text-gray-500 font-mono"></p>
             </div>
             <div class="w-10"></div>
@@ -50,7 +49,7 @@
                 </button>
                 
                 <div class="flex gap-2 bg-[#161b22] p-1 rounded-2xl border border-gray-700 focus-within:border-blue-500">
-                    <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none text-lg" placeholder="පණිවිඩයක් ලියන්න...">
+                    <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none text-lg" placeholder="මගෙන් ඕනෑම දෙයක් අහන්න...">
                     <button onclick="processInput()" class="bg-blue-600 w-16 h-16 rounded-xl text-white flex items-center justify-center hover:bg-blue-500 transition active:scale-95">
                         <i class="fas fa-paper-plane text-2xl"></i>
                     </button>
@@ -77,7 +76,7 @@
         }
 
         function deleteChat(id, event) {
-            event.stopPropagation(); // Item එක ක්ලික් වෙන්න දෙන්නේ නැහැ
+            event.stopPropagation();
             if(confirm("මේ චැට් එක මකන්නද?")) {
                 delete chatHistory[id];
                 saveHistory();
@@ -91,15 +90,12 @@
             Object.keys(chatHistory).sort().reverse().forEach(id => {
                 const item = document.createElement('div');
                 item.className = 'history-item';
-                
                 const textSpan = document.createElement('span');
                 textSpan.className = 'truncate pr-2';
                 textSpan.innerText = chatHistory[id][0]?.text || "හිස් චැට් එකක්";
-                
                 const delBtn = document.createElement('button');
-                delBtn.innerHTML = '<i class="fas fa-trash-alt text-red-500 hover:text-red-300"></i>';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
                 delBtn.onclick = (e) => deleteChat(id, e);
-                
                 item.onclick = () => loadChat(id);
                 item.appendChild(textSpan);
                 item.appendChild(delBtn);
@@ -116,7 +112,7 @@
 
         function newChat() {
             currentChatId = Date.now();
-            document.getElementById('chatBox').innerHTML = '<div class="bubble-ai">අලුත් චැට් එකක් පටන් ගත්තා මචං. මම ඔයාට උදව් කරන්න සූදානම්!</div>';
+            document.getElementById('chatBox').innerHTML = '<div class="bubble-ai">අලුත් චැට් එකක් පටන් ගත්තා මචං. මම සූදානම්!</div>';
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
@@ -126,7 +122,7 @@
             for (let i = 0; i < text.length; i++) {
                 element.innerText += text.charAt(i);
                 document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-                await new Promise(r => setTimeout(r, 20));
+                await new Promise(r => setTimeout(r, 25));
             }
             element.classList.remove('typing');
         }
@@ -137,7 +133,6 @@
             div.innerText = content;
             document.getElementById('chatBox').appendChild(div);
             document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-            
             if (shouldSave) {
                 if (!chatHistory[currentChatId]) chatHistory[currentChatId] = [];
                 chatHistory[currentChatId].push({role, text: content});
@@ -151,12 +146,14 @@
             if(!text) return;
             displayMsg('user', text);
             document.getElementById('userIn').value = '';
-
             const aiBubble = displayMsg('ai', 'සිතමින් පවතී...');
             
             try {
-                const sysPrompt = `ඔබ Pusa Omni. වර්තමාන කාලය: ${new Date().toString()}. ඔබ ලෝකයේ අලුත්ම තොරතුරු දන්නා බුද්ධිමත් AI එකකි. සිංහලෙන් ඉතා පැහැදිලිව පිළිතුරු දෙන්න.`;
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(sysPrompt + " | ප්‍රශ්නය: " + text)}?model=searchgpt&seed=${Date.now()}`);
+                // OpenAI මාදිලියට මාරු කිරීම (Error එක නැති කිරීමට)
+                const sysPrompt = `ඔබ Pusa Omni. වර්තමාන කාලය: ${new Date().toString()}. ඉතා පැහැදිලි සිංහලෙන් පිළිතුරු දෙන්න.`;
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(sysPrompt + " | ප්‍රශ්නය: " + text)}?model=openai&seed=${Date.now()}`);
+                
+                if (!res.ok) throw new Error();
                 const data = await res.text();
                 
                 await typeWriter(data, aiBubble);
@@ -166,7 +163,7 @@
                 chatHistory[currentChatId][chatHistory[currentChatId].length-1].text = data;
                 saveHistory();
             } catch (e) {
-                aiBubble.innerText = "සමාවෙන්න මචං, මට දත්ත ලබාගන්න බැරි වුණා.";
+                aiBubble.innerText = "මචං, මට උත්තරයක් ගන්න බැරි වුණා. ආයෙත් උත්සාහ කරමුද?";
             }
         }
 
