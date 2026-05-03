@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusa Omni - Fixed Intelligence</title>
+    <title>Pusa Omni - Unstoppable v6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -21,12 +21,12 @@
 </head>
 <body class="flex">
 
-    <div id="sidebar" class="sidebar p-4 flex flex-col">
+    <div id="sidebar" class="sidebar p-4 flex flex-col shadow-2xl">
         <div class="flex justify-between items-center mb-6">
-            <span class="font-bold text-blue-500 tracking-widest">CHATS</span>
+            <span class="font-bold text-blue-500 tracking-widest uppercase">System Memory</span>
             <button onclick="toggleSidebar()" class="text-white"><i class="fas fa-times text-xl"></i></button>
         </div>
-        <button onclick="newChat()" class="w-full border border-gray-600 p-3 rounded-xl mb-4 hover:bg-gray-800 transition font-bold">+ NEW CHAT</button>
+        <button onclick="newChat()" class="w-full border border-blue-600 p-3 rounded-xl mb-4 hover:bg-blue-900 transition font-bold text-blue-400">+ NEW SESSION</button>
         <div id="historyList" class="overflow-y-auto flex-1"></div>
     </div>
 
@@ -34,10 +34,10 @@
         <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center">
             <button onclick="toggleSidebar()" class="text-blue-500 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800"><i class="fas fa-bars text-xl"></i></button>
             <div class="text-center">
-                <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-white text-[10px] bg-red-600 px-1 rounded animate-pulse">FIXED</span></h1>
-                <p id="clock" class="text-[9px] text-gray-500 font-mono"></p>
+                <h1 class="text-lg font-black text-blue-500 italic uppercase">PUSA OMNI <span class="text-white text-[10px] bg-blue-600 px-1 rounded animate-pulse">ULTIMATE</span></h1>
+                <p id="clock" class="text-[9px] text-gray-500 font-mono mt-1"></p>
             </div>
-            <div class="w-10"></div>
+            <div id="modelStatus" class="text-[8px] text-green-500 font-bold uppercase">Ready</div>
         </div>
 
         <div id="chatBox" class="chat-area flex-1 bg-[#010409]"></div>
@@ -49,8 +49,8 @@
                 </button>
                 
                 <div class="flex gap-2 bg-[#161b22] p-1 rounded-2xl border border-gray-700 focus-within:border-blue-500">
-                    <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none text-lg" placeholder="මගෙන් ඕනෑම දෙයක් අහන්න...">
-                    <button onclick="processInput()" class="bg-blue-600 w-16 h-16 rounded-xl text-white flex items-center justify-center hover:bg-blue-500 transition active:scale-95">
+                    <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none text-lg" placeholder="අණක් ලබා දෙන්න...">
+                    <button onclick="processInput()" class="bg-blue-600 w-16 h-16 rounded-xl text-white flex items-center justify-center hover:bg-blue-500 transition active:scale-95 shadow-lg">
                         <i class="fas fa-paper-plane text-2xl"></i>
                     </button>
                 </div>
@@ -61,6 +61,8 @@
     <script>
         let currentChatId = Date.now();
         let chatHistory = JSON.parse(localStorage.getItem('pusa_history')) || {};
+        // මොඩල් 10ක් ඇතුළත් කර ඇත
+        const aiModels = ['openai', 'mistral', 'llama', 'searchgpt', 'qwen', 'pi', 'gpt-4o', 'gemini', 'claude', 'deepseek'];
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
@@ -77,7 +79,7 @@
 
         function deleteChat(id, event) {
             event.stopPropagation();
-            if(confirm("මේ චැට් එක මකන්නද?")) {
+            if(confirm("මෙම දත්ත මකා දැමීමට අවශ්‍යද?")) {
                 delete chatHistory[id];
                 saveHistory();
                 if(currentChatId == id) newChat();
@@ -92,9 +94,9 @@
                 item.className = 'history-item';
                 const textSpan = document.createElement('span');
                 textSpan.className = 'truncate pr-2';
-                textSpan.innerText = chatHistory[id][0]?.text || "හිස් චැට් එකක්";
+                textSpan.innerText = chatHistory[id][0]?.text || "Empty Stream";
                 const delBtn = document.createElement('button');
-                delBtn.innerHTML = '<i class="fas fa-trash-alt text-red-500"></i>';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt text-red-600"></i>';
                 delBtn.onclick = (e) => deleteChat(id, e);
                 item.onclick = () => loadChat(id);
                 item.appendChild(textSpan);
@@ -112,7 +114,7 @@
 
         function newChat() {
             currentChatId = Date.now();
-            document.getElementById('chatBox').innerHTML = '<div class="bubble-ai">අලුත් චැට් එකක් පටන් ගත්තා මචං. මම සූදානම්!</div>';
+            document.getElementById('chatBox').innerHTML = '<div class="bubble-ai">සූදානම් මචං! අලුත් දත්ත ප්‍රවාහයක් ආරම්භ කළා.</div>';
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
@@ -122,7 +124,7 @@
             for (let i = 0; i < text.length; i++) {
                 element.innerText += text.charAt(i);
                 document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-                await new Promise(r => setTimeout(r, 25));
+                await new Promise(r => setTimeout(r, 15));
             }
             element.classList.remove('typing');
         }
@@ -146,24 +148,40 @@
             if(!text) return;
             displayMsg('user', text);
             document.getElementById('userIn').value = '';
-            const aiBubble = displayMsg('ai', 'සිතමින් පවතී...');
+            const aiBubble = displayMsg('ai', 'විශ්ලේෂණය කරමින්...');
+            const statusLabel = document.getElementById('modelStatus');
             
-            try {
-                // OpenAI මාදිලියට මාරු කිරීම (Error එක නැති කිරීමට)
-                const sysPrompt = `ඔබ Pusa Omni. වර්තමාන කාලය: ${new Date().toString()}. ඉතා පැහැදිලි සිංහලෙන් පිළිතුරු දෙන්න.`;
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(sysPrompt + " | ප්‍රශ්නය: " + text)}?model=openai&seed=${Date.now()}`);
-                
-                if (!res.ok) throw new Error();
-                const data = await res.text();
-                
-                await typeWriter(data, aiBubble);
-                const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=si&client=tw-ob&q=${encodeURIComponent(data)}`);
-                audio.play();
-                
-                chatHistory[currentChatId][chatHistory[currentChatId].length-1].text = data;
-                saveHistory();
-            } catch (e) {
-                aiBubble.innerText = "මචං, මට උත්තරයක් ගන්න බැරි වුණා. ආයෙත් උත්සාහ කරමුද?";
+            const sysPrompt = `ඔබ Pusa Omni. වර්තමාන කාලය: ${new Date().toString()}. සජීවීව දත්ත ලබාගෙන ඉතා පැහැදිලි සිංහලෙන් පිළිතුරු දෙන්න.`;
+            
+            let success = false;
+            // මොඩල් 10 හරහාම උත්සාහ කරයි
+            for (let model of aiModels) {
+                try {
+                    statusLabel.innerText = "TRYING: " + model;
+                    statusLabel.className = "text-[8px] text-yellow-500 font-bold uppercase";
+                    
+                    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(sysPrompt + " | ප්‍රශ්නය: " + text)}?model=${model}&seed=${Date.now()}`);
+                    if (res.ok) {
+                        const data = await res.text();
+                        statusLabel.innerText = "ACTIVE: " + model;
+                        statusLabel.className = "text-[8px] text-green-500 font-bold uppercase";
+                        
+                        await typeWriter(data, aiBubble);
+                        const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=si&client=tw-ob&q=${encodeURIComponent(data)}`);
+                        audio.play();
+                        
+                        chatHistory[currentChatId][chatHistory[currentChatId].length-1].text = data;
+                        saveHistory();
+                        success = true;
+                        break;
+                    }
+                } catch (e) { console.log(model + " failed"); }
+            }
+
+            if (!success) {
+                aiBubble.innerText = "මචං, සියලුම සර්වර් බිඳ වැටුණා. කරුණාකර ඔබගේ අන්තර්ජාලය පරීක්ෂා කරන්න.";
+                statusLabel.innerText = "ALL MODELS FAILED";
+                statusLabel.className = "text-[8px] text-red-500 font-bold uppercase";
             }
         }
 
@@ -181,7 +199,7 @@
 
         window.onload = () => {
             renderHistoryList();
-            if(!chatHistory[currentChatId]) displayMsg('ai', 'මම සූදානම් මචං. ඕනෑම දෙයක් අහන්න!', false);
+            if(!chatHistory[currentChatId]) displayMsg('ai', 'පද්ධතිය සූදානම්. ඔබගේ අණ ලබා දෙන්න.', false);
         };
     </script>
 </body>
