@@ -1,141 +1,191 @@
-
 <!DOCTYPE html>
 <html lang="si">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusa Omni - Real-Time Intelligence</title>
+    <title>Pusa Omni - Infinity Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background: #010409; color: #e6edf3; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        .chat-area { height: 65vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
-        .bubble-ai { background: #161b22; border: 1px solid #30363d; border-radius: 20px 20px 20px 5px; padding: 15px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.6); line-height: 1.6; position: relative; }
-        .bubble-user { background: #1f6feb; border-radius: 20px 20px 5px 20px; padding: 15px; max-width: 85%; align-self: flex-end; font-weight: 500; }
-        .mic-btn-active { background: #f85149 !important; animation: pulse 1.2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(248, 81, 73, 0); } 100% { transform: scale(1); } }
+        .sidebar { width: 280px; background: #0d1117; border-right: 1px solid #30363d; height: 100vh; transition: 0.3s; position: fixed; left: -280px; z-index: 100; }
+        .sidebar.active { left: 0; }
+        .chat-area { height: 70vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
+        .bubble-ai { background: #161b22; border: 1px solid #30363d; border-radius: 20px 20px 20px 5px; padding: 15px; max-width: 90%; line-height: 1.6; }
+        .bubble-user { background: #1f6feb; border-radius: 20px 20px 5px 20px; padding: 15px; max-width: 85%; align-self: flex-end; }
+        .history-item { padding: 12px; border-bottom: 1px solid #21262d; cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .history-item:hover { background: #1f6feb; }
         .typing::after { content: '|'; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body class="flex">
 
-    <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center shadow-md">
-        <div>
-            <h1 class="text-xl font-black text-blue-500 tracking-tighter italic">PUSA OMNI <span class="text-white text-xs bg-red-600 px-1 rounded animate-pulse">LIVE</span></h1>
-            <p id="clock" class="text-[10px] text-gray-500 font-mono mt-1"></p>
+    <div id="sidebar" class="sidebar p-4 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <span class="font-bold text-blue-500">HISTORY</span>
+            <button onclick="toggleSidebar()" class="text-white"><i class="fas fa-times text-xl"></i></button>
         </div>
-        <div class="text-right">
-            <span id="status" class="text-[9px] text-green-400 font-bold uppercase block">Synchronized</span>
-            <span class="text-[9px] text-gray-500 uppercase italic">Real-Time Context Active</span>
-        </div>
+        <button onclick="newChat()" class="w-full border border-gray-600 p-3 rounded-xl mb-4 hover:bg-gray-800 transition font-bold">+ NEW CHAT</button>
+        <div class="font-bold text-[10px] text-gray-500 mb-2 uppercase tracking-widest">පරණ චැට්</div>
+        <div id="historyList" class="overflow-y-auto flex-1"></div>
     </div>
 
-    <div id="chatBox" class="chat-area flex-1 bg-[#010409]">
-        <div class="bubble-ai">මචං, මම දැන් සජීවීව ලෝකයත් එක්ක සම්බන්ධයි. ඊයේ වුණු දේවල්, අද තත්පරෙන් තත්පරේ වෙනස් වෙන දේවල් සහ හෙට ගැනත් අපිට කතා කරන්න පුළුවන්. මම ලෑස්තියි!</div>
-    </div>
+    <div class="flex-1 flex flex-col h-screen transition-all ml-0">
+        <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center">
+            <button onclick="toggleSidebar()" class="text-blue-500 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800"><i class="fas fa-bars text-xl"></i></button>
+            <div class="text-center">
+                <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-white text-[10px] bg-red-600 px-1 rounded animate-pulse">LIVE</span></h1>
+                <p id="clock" class="text-[9px] text-gray-500 font-mono"></p>
+            </div>
+            <div class="w-10"></div>
+        </div>
 
-    <div class="p-6 bg-[#0d1117] border-t border-gray-800 shadow-2xl">
-        <div class="flex flex-col gap-4">
-            <button onclick="startListening()" id="micBtn" class="w-full bg-blue-600 h-20 rounded-3xl flex items-center justify-center gap-4 transition active:scale-95 shadow-lg border-b-4 border-blue-900">
-                <i class="fas fa-microphone text-3xl text-white"></i>
-                <div class="text-left">
-                    <p class="text-[10px] text-blue-200 font-bold uppercase leading-none">Voice Protocol</p>
-                    <p class="text-lg font-black text-white uppercase">මයික් එක ඔබන්න</p>
-                </div>
-            </button>
+        <div id="chatBox" class="chat-area flex-1 bg-[#010409]"></div>
 
-            <div class="flex gap-2 bg-[#010409] p-2 rounded-2xl border border-gray-700 focus-within:border-blue-500">
-                <input id="userIn" type="text" class="flex-1 bg-transparent p-3 text-white focus:outline-none text-md" placeholder="ඕනෑම දෙයක් අහන්න...">
-                <button onclick="processInput()" class="bg-blue-600 w-14 h-14 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-paper-plane text-white"></i>
+        <div class="p-4 bg-[#0d1117] border-t border-gray-800 shadow-2xl">
+            <div class="flex flex-col gap-3 max-w-4xl mx-auto">
+                <button onclick="startListening()" id="micBtn" class="w-full bg-blue-600 h-20 rounded-3xl flex items-center justify-center transition shadow-lg active:scale-90 border-b-4 border-blue-800">
+                    <i class="fas fa-microphone text-4xl text-white"></i>
                 </button>
+                
+                <div class="flex gap-2 bg-[#161b22] p-1 rounded-2xl border border-gray-700 focus-within:border-blue-500">
+                    <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none text-lg" placeholder="පණිවිඩයක් ලියන්න...">
+                    <button onclick="processInput()" class="bg-blue-600 w-16 h-16 rounded-xl text-white flex items-center justify-center hover:bg-blue-500 transition active:scale-95">
+                        <i class="fas fa-paper-plane text-2xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const chatBox = document.getElementById('chatBox');
-        const userIn = document.getElementById('userIn');
-        const micBtn = document.getElementById('micBtn');
+        let currentChatId = Date.now();
+        let chatHistory = JSON.parse(localStorage.getItem('pusa_history')) || {};
 
-        // පද්ධති වේලාව සහ දිනය සජීවීව යාවත්කාලීන කිරීම
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
         function updateClock() {
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('clock').innerText = now.toLocaleString('si-LK', options);
+            document.getElementById('clock').innerText = now.toLocaleString('si-LK');
         }
         setInterval(updateClock, 1000);
+
+        function saveHistory() {
+            localStorage.setItem('pusa_history', JSON.stringify(chatHistory));
+            renderHistoryList();
+        }
+
+        function deleteChat(id, event) {
+            event.stopPropagation(); // Item එක ක්ලික් වෙන්න දෙන්නේ නැහැ
+            if(confirm("මේ චැට් එක මකන්නද?")) {
+                delete chatHistory[id];
+                saveHistory();
+                if(currentChatId == id) newChat();
+            }
+        }
+
+        function renderHistoryList() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            Object.keys(chatHistory).sort().reverse().forEach(id => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'truncate pr-2';
+                textSpan.innerText = chatHistory[id][0]?.text || "හිස් චැට් එකක්";
+                
+                const delBtn = document.createElement('button');
+                delBtn.innerHTML = '<i class="fas fa-trash-alt text-red-500 hover:text-red-300"></i>';
+                delBtn.onclick = (e) => deleteChat(id, e);
+                
+                item.onclick = () => loadChat(id);
+                item.appendChild(textSpan);
+                item.appendChild(delBtn);
+                list.appendChild(item);
+            });
+        }
+
+        function loadChat(id) {
+            currentChatId = id;
+            document.getElementById('chatBox').innerHTML = '';
+            chatHistory[id].forEach(msg => displayMsg(msg.role, msg.text, false));
+            toggleSidebar();
+        }
+
+        function newChat() {
+            currentChatId = Date.now();
+            document.getElementById('chatBox').innerHTML = '<div class="bubble-ai">අලුත් චැට් එකක් පටන් ගත්තා මචං. මම ඔයාට උදව් කරන්න සූදානම්!</div>';
+            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        }
 
         async function typeWriter(text, element) {
             element.innerText = '';
             element.classList.add('typing');
-            let i = 0;
-            return new Promise(resolve => {
-                function type() {
-                    if (i < text.length) {
-                        element.innerText += text.charAt(i);
-                        i++;
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                        setTimeout(type, 25);
-                    } else {
-                        element.classList.remove('typing');
-                        resolve();
-                    }
-                }
-                type();
-            });
+            for (let i = 0; i < text.length; i++) {
+                element.innerText += text.charAt(i);
+                document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+                await new Promise(r => setTimeout(r, 20));
+            }
+            element.classList.remove('typing');
         }
 
-        function displayMsg(role, content) {
+        function displayMsg(role, content, shouldSave = true) {
             const div = document.createElement('div');
             div.className = role === 'user' ? 'bubble-user' : 'bubble-ai';
             div.innerText = content;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            document.getElementById('chatBox').appendChild(div);
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+            
+            if (shouldSave) {
+                if (!chatHistory[currentChatId]) chatHistory[currentChatId] = [];
+                chatHistory[currentChatId].push({role, text: content});
+                saveHistory();
+            }
             return div;
         }
 
         async function processInput() {
-            const text = userIn.value.trim();
+            const text = document.getElementById('userIn').value.trim();
             if(!text) return;
             displayMsg('user', text);
-            userIn.value = '';
+            document.getElementById('userIn').value = '';
 
-            const aiBubble = displayMsg('ai', 'ලෝක දත්ත විශ්ලේෂණය කරමින්...');
+            const aiBubble = displayMsg('ai', 'සිතමින් පවතී...');
             
             try {
-                const now = new Date();
-                // AI එකට වර්තමාන කාලය සහ සජීවී බව තේරුම් කර දෙන 'Super Prompt' එක
-                const systemContext = `වර්තමාන දිනය සහ වේලාව: ${now.toString()}. ඔබ "Pusa Omni" නම් අතිශය දියුණු AI එකකි. ඔබට ඊයේ, අද සහ හෙට ගැන ගැඹුරු අවබෝධයක් ඇත. සෑම තත්පරයකම සිදුවන ලෝක සිදුවීම් ගැන සජීවීව සිතා පිළිතුරු දෙන්න. සැමවිටම සිංහලෙන් පිළිතුරු දෙන්න.`;
-                
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemContext + " | පරිශීලක: " + text)}?model=searchgpt&seed=${Date.now()}`);
+                const sysPrompt = `ඔබ Pusa Omni. වර්තමාන කාලය: ${new Date().toString()}. ඔබ ලෝකයේ අලුත්ම තොරතුරු දන්නා බුද්ධිමත් AI එකකි. සිංහලෙන් ඉතා පැහැදිලිව පිළිතුරු දෙන්න.`;
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(sysPrompt + " | ප්‍රශ්නය: " + text)}?model=searchgpt&seed=${Date.now()}`);
                 const data = await res.text();
                 
                 await typeWriter(data, aiBubble);
-                
                 const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=si&client=tw-ob&q=${encodeURIComponent(data)}`);
                 audio.play();
                 
+                chatHistory[currentChatId][chatHistory[currentChatId].length-1].text = data;
+                saveHistory();
             } catch (e) {
-                aiBubble.innerText = "සර්වර් සම්බන්ධතාවය බිඳ වැටුණා. කරුණාකර නැවත උත්සාහ කරන්න.";
+                aiBubble.innerText = "සමාවෙන්න මචං, මට දත්ත ලබාගන්න බැරි වුණා.";
             }
         }
 
         function startListening() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert("මයික් එක ක්‍රියා නොකරයි."); return;
-            }
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'si-LK';
-            recognition.onstart = () => micBtn.classList.add('mic-btn-active');
-            recognition.onresult = (e) => {
-                userIn.value = e.results[0][0].transcript;
+            const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            rec.lang = 'si-LK';
+            rec.onstart = () => document.getElementById('micBtn').classList.add('bg-red-600', 'animate-pulse');
+            rec.onresult = (e) => {
+                document.getElementById('userIn').value = e.results[0][0].transcript;
                 processInput();
             };
-            recognition.onend = () => micBtn.classList.remove('mic-btn-active');
-            recognition.start();
+            rec.onend = () => document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
+            rec.start();
         }
+
+        window.onload = () => {
+            renderHistoryList();
+            if(!chatHistory[currentChatId]) displayMsg('ai', 'මම සූදානම් මචං. ඕනෑම දෙයක් අහන්න!', false);
+        };
     </script>
 </body>
 </html>
