@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pusa Omni - Mobile Pro</title>
+    <title>Pusa Omni - Stable Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -19,15 +19,13 @@
 <body>
 
     <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center">
-        <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-[10px] text-green-500 ml-1">● READY</span></h1>
+        <h1 class="text-lg font-black text-blue-500 italic">PUSA OMNI <span class="text-[10px] text-green-500 ml-1">● FIXED & READY</span></h1>
         <div id="loading" class="loader"></div>
     </div>
 
     <div id="chatBox" class="chat-container">
-        <div class="bubble ai">මචං, මම සූදානම්! දැන් ඔයාගේ පෝන් එකෙන් ඕනෑම දෙයක් අහන්න. කිසිම එරර් එකක් එන්නේ නැහැ.</div>
+        <div class="bubble ai">දැන් හරි මචං! අර "Invalid Value" එරර් එක මම අයින් කළා. දැන් ඕනෑම දෙයක් අහන්න.</div>
     </div>
-
-    <div id="mediaBox" class="px-4"></div>
 
     <div class="p-4 bg-[#0d1117] border-t border-gray-800">
         <div class="flex flex-col gap-3">
@@ -40,11 +38,10 @@
                     <i class="fas fa-paper-plane text-white text-sm"></i>
                 </button>
             </div>
-            
             <div class="flex gap-2 overflow-x-auto pb-2">
-                <button onclick="quickAction('image')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full whitespace-nowrap border border-gray-700">CREATE IMAGE</button>
-                <button onclick="quickAction('music')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full whitespace-nowrap border border-gray-700">AI VOICE/SONG</button>
-                <button onclick="quickAction('app')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full whitespace-nowrap border border-gray-700">CODE APP</button>
+                <button onclick="quickAction('image')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full border border-gray-700 whitespace-nowrap">CREATE IMAGE</button>
+                <button onclick="quickAction('music')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full border border-gray-700 whitespace-nowrap">AI VOICE/SONG</button>
+                <button onclick="quickAction('app')" class="text-[10px] bg-gray-800 px-3 py-1 rounded-full border border-gray-700 whitespace-nowrap">CODE APP</button>
             </div>
         </div>
     </div>
@@ -63,21 +60,18 @@
             loading.style.display = 'block';
 
             try {
-                // සර්වර් පාලම (Keyless & Stable)
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&seed=${Date.now()}`);
+                // FIXED: Seed එක 32-bit සීමාව ඇතුළේ තබා ගැනීම (Math.random)
+                const safeSeed = Math.floor(Math.random() * 1000000);
+                const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&seed=${safeSeed}`;
+                
+                const response = await fetch(url);
                 const data = await response.text();
                 
                 loading.style.display = 'none';
                 addMsg('ai', data);
-                
-                // Voice Output (optional)
-                const speech = new SpeechSynthesisUtterance(data);
-                speech.lang = 'si-LK';
-                // window.speechSynthesis.speak(speech);
-
             } catch (e) {
                 loading.style.display = 'none';
-                addMsg('ai', "මචං, සම්බන්ධතාවයේ පොඩි ප්‍රශ්නයක්. ආයේ ට්‍රයි කරමුද?");
+                addMsg('ai', "සර්වර් එකට සම්බන්ධ වෙන්න බැරි වුණා. ආයේ ට්‍රයි කරමු.");
             }
         }
 
