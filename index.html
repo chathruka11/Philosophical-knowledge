@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pusa Omni - Self-Healing Brain</title>
+    <title>Pusa Omni - Unstoppable Brain</title>
     
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
@@ -16,6 +16,11 @@
         .bubble-ai { background: #161b22; border-left: 4px solid #1f6feb; padding: 15px; border-radius: 5px 20px 20px 20px; }
         .bubble-user { background: #1f6feb; padding: 15px; border-radius: 20px 20px 5px 20px; align-self: flex-end; }
         .status-msg { font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 10px; }
+        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite;}
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 
+        40% { color: white; text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); }
+        60% { text-shadow: .5em 0 0 white, 1em 0 0 rgba(0,0,0,0); }
+        80%, 100% { text-shadow: .5em 0 0 white, 1em 0 0 white; } }
     </style>
 </head>
 <body class="flex flex-col h-screen">
@@ -23,22 +28,21 @@
     <script type="py">
         import js
 
-        def auto_repair_logic(user_input):
-            # සර්වර් එකට සම්බන්ධ වෙන්න බැරි වුණොත් පයිතන් මොළය ක්‍රියාත්මක වේ
-            user_input = user_input.lower()
+        def brain_response(text):
+            text = text.lower()
+            # Local Python Logic - සර්වර් එක ඕනෑම නැති කොටස
+            if "ඔයා කවුද" in text:
+                return "මම Pusa Omni. ඔයාගේ ස්වාධීන පයිතන් මොළය."
+            if "මෙහෙයුම" in text:
+                return "අපේ මෙහෙයුම ලෝකය ජය ගැනීමයි මචං!"
             
-            # මෙතැනදී AI එක විසින්ම ගණනය කිරීම් හෝ තීරණ ගනී
-            if "ගණන්" in user_input or "හදන්න" in user_input:
-                return "සර්වර් බාධාවක්! පයිතන් මොළය විසින් දත්ත විශ්ලේෂණය කර පිළිතුර සූදානම් කරයි..."
-            
-            return "ස්වයංක්‍රීය පයිතන් පද්ධතිය ක්‍රියාත්මකයි. සර්වර් එකට සම්බන්ධ වීමට අවශ්‍ය නැත."
+            return None # පයිතන් දන්නේ නැතිනම් API එකට යවනවා
 
-        js.window.run_python_healing = auto_repair_logic
+        js.window.python_brain = brain_response
     </script>
 
     <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center">
-        <h1 class="text-xl font-black text-blue-500 italic">PUSA OMNI <span class="bg-red-600 text-white text-[10px] px-2 py-1 rounded ml-1 uppercase">Autonomous</span></h1>
-        <div id="connectionStatus" class="status-msg bg-green-900 text-green-400">LOCAL CORE ACTIVE</div>
+        <h1 class="text-xl font-black text-blue-500 italic uppercase">PUSA OMNI <span id="brainIndicator" class="bg-gray-600 text-white text-[10px] px-2 py-1 rounded ml-1">Loading Brain...</span></h1>
     </div>
 
     <div id="chatBox" class="chat-area flex-1"></div>
@@ -48,7 +52,6 @@
             <button onclick="startListening()" id="micBtn" class="w-full bg-blue-600 h-20 rounded-3xl flex items-center justify-center shadow-lg active:scale-95">
                 <i class="fas fa-microphone text-4xl text-white"></i>
             </button>
-            
             <div class="flex gap-2 bg-[#161b22] p-1 rounded-2xl border border-gray-700">
                 <input id="userIn" type="text" class="flex-1 bg-transparent p-4 text-white focus:outline-none" placeholder="අණක් ලබා දෙන්න...">
                 <button onclick="processInput()" class="bg-blue-600 w-16 h-16 rounded-xl text-white">
@@ -59,29 +62,41 @@
     </div>
 
     <script>
+        // PyScript ලෝඩ් වුණාම ඉන්ඩිකේටර් එක මාරු කිරීම
+        window.addEventListener('py:ready', () => {
+            document.getElementById('brainIndicator').innerText = "BRAIN ACTIVE";
+            document.getElementById('brainIndicator').className = "bg-green-600 text-white text-[10px] px-2 py-1 rounded ml-1";
+        });
+
         async function processInput() {
             const text = document.getElementById('userIn').value.trim();
             if(!text) return;
             
             displayMsg('user', text);
             document.getElementById('userIn').value = '';
-            const aiBubble = displayMsg('ai', 'සම්බන්ධතාවය පරීක්ෂා කරමින්...');
+            const aiBubble = displayMsg('ai', 'විශ්ලේෂණය කරමින්...');
+            aiBubble.classList.add('loading-dots');
 
+            // 1. මුලින්ම පයිතන් මොළයෙන් අහනවා
             try {
-                // 1. මුලින්ම සර්වර් එකට සම්බන්ධ වීමට උත්සාහ කරයි
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai`);
-                if (!res.ok) throw new Error("Server Down");
-                
+                const pyRes = window.python_brain(text);
+                if(pyRes) {
+                    aiBubble.classList.remove('loading-dots');
+                    aiBubble.innerText = pyRes;
+                    return;
+                }
+            } catch(e) { console.log("Python brain booting..."); }
+
+            // 2. සර්වර් එකට සම්බන්ධ වීමට උත්සාහ කරයි (අලුත් API එක)
+            try {
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&seed=${Date.now()}`);
+                if (!res.ok) throw new Error();
                 const data = await res.text();
+                aiBubble.classList.remove('loading-dots');
                 aiBubble.innerText = data;
-                
             } catch (e) {
-                // 2. සර්වර් එක බැරි වුණොත් ස්වයංක්‍රීයව Python Logic එක ක්‍රියාත්මක වේ
-                document.getElementById('connectionStatus').innerText = "HEALING: RUNNING LOCAL PYTHON";
-                document.getElementById('connectionStatus').className = "status-msg bg-yellow-900 text-yellow-400";
-                
-                const pyBackup = window.run_python_healing(text);
-                aiBubble.innerText = "සර්වර් එකට සම්බන්ධ වෙන්න බැහැ මචං. මම දැන් මගේම Python කෝඩ් එකක් පාවිච්චි කරලා මේක විසඳන්න හදන්නේ: \n\n" + pyBackup;
+                aiBubble.classList.remove('loading-dots');
+                aiBubble.innerText = "සර්වර් එකට සම්බන්ධ වෙන්න බැහැ මචං. හැබැයි මගේ පයිතන් කෝර් එක වැඩ!";
             }
         }
 
