@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pusa Omni - Advanced AI</title>
+    <title>Pusa Omni - Ultra Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #010409; color: #e6edf3; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
-        .bubble { padding: 14px 18px; border-radius: 20px; max-width: 88%; font-size: 15px; line-height: 1.6; }
-        .ai { background: #161b22; border: 1px solid #30363d; align-self: flex-start; border-bottom-left-radius: 4px; white-space: pre-wrap; color: #d1d5db; }
-        .user { background: linear-gradient(135deg, #1f6feb, #238636); color: white; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 500; }
-        .loader { width: 22px; height: 22px; border: 3px solid #30363d; border-top: 3px solid #1f6feb; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        body { background: #010409; color: #e6edf3; font-family: 'Segoe UI', system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; scroll-behavior: smooth; }
+        .bubble { padding: 15px 20px; border-radius: 22px; max-width: 85%; font-size: 15px; line-height: 1.6; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .ai { background: #161b22; border: 1px solid #30363d; align-self: flex-start; border-bottom-left-radius: 4px; color: #d1d5db; }
+        .user { background: linear-gradient(135deg, #1f6feb, #2ea043); color: white; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 500; }
+        .loader { width: 24px; height: 24px; border: 3px solid #30363d; border-top: 3px solid #1f6feb; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Markdown rendering help */
+        .ai b, .ai strong { color: #58a6ff; }
+        .ai pre { background: #0d1117; padding: 10px; border-radius: 8px; margin-top: 10px; overflow-x: auto; border: 1px solid #30363d; }
     </style>
 </head>
 <body>
 
-    <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center shadow-lg">
-        <h1 class="text-lg font-black text-blue-500 italic tracking-widest">PUSA OMNI <span class="text-[9px] bg-green-900 px-2 py-0.5 rounded text-white ml-1">BRAIN v3.0</span></h1>
+    <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center z-10 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full absolute top-0 animate-ping"></div>
+            </div>
+            <h1 class="text-xl font-black text-blue-500 italic tracking-tighter">PUSA OMNI <span class="text-[10px] bg-blue-900/50 px-2 py-0.5 rounded border border-blue-700/50 text-blue-200 ml-1">ULTRA v4.0</span></h1>
+        </div>
         <div id="loading" class="loader"></div>
     </div>
 
     <div id="chatBox" class="chat-container">
-        <div class="bubble ai">මචං, මම දැන් මගේ "මොළය" සම්පූර්ණයෙන්ම අප්ඩේට් කරගත්තා. දැන් මට පුළුවන් ඕනෑම සංකීර්ණ ප්‍රශ්නයකට හරිම තාර්කිකව සහ පැහැදිලිව මගේ යාළුවෙක්ට වගේ පිළිතුරු දෙන්න. මොනවද දැනගන්න ඕනේ?</div>
+        <div class="bubble ai">මචං, මම දැන් ඉන්නේ මගේ උපරිම මට්ටමේ (Ultra Mode). මම දැන් ඕනෑම දෙයක් ගැන ඉතා ගැඹුරින් හිතලා, හරියටම මගේ යාළුවෙක්ට වගේ උත්තර දෙන්න ලෑස්තියි. මොනවද අද දැනගන්න ඕනේ?</div>
     </div>
 
-    <div class="p-4 bg-[#0d1117] border-t border-gray-800">
-        <div class="max-w-4xl mx-auto flex flex-col gap-3">
-            <div class="flex gap-2">
-                <button onclick="startListening()" id="micBtn" class="bg-[#161b22] border border-gray-700 w-12 h-12 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-microphone text-blue-500"></i>
-                </button>
-                <input id="userIn" type="text" class="flex-1 bg-[#161b22] border border-gray-700 rounded-xl px-4 text-white focus:outline-none focus:border-blue-500 shadow-inner" placeholder="මා සමඟ කතා කරන්න...">
-                <button onclick="processInput()" class="bg-blue-600 w-12 h-12 rounded-xl text-white flex items-center justify-center active:scale-95 transition-all">
-                    <i class="fas fa-paper-plane"></i>
+    <div class="p-4 bg-[#0d1117] border-t border-gray-800 shadow-2xl">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex gap-3 items-end">
+                <div class="flex-1 bg-[#161b22] border border-gray-700 rounded-2xl flex items-center px-4 focus-within:border-blue-500 transition-all">
+                    <textarea id="userIn" rows="1" class="flex-1 bg-transparent py-3 text-white focus:outline-none resize-none overflow-hidden" placeholder="මගෙන් ඕනෑම දෙයක් අහන්න..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    <button onclick="startListening()" id="micBtn" class="ml-2 text-gray-400 hover:text-blue-500 transition-colors">
+                        <i class="fas fa-microphone text-lg"></i>
+                    </button>
+                </div>
+                <button onclick="processInput()" class="bg-blue-600 hover:bg-blue-500 w-12 h-12 rounded-xl text-white flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                    <i class="fas fa-paper-plane text-lg"></i>
                 </button>
             </div>
         </div>
@@ -52,46 +63,51 @@
 
             addMsg('user', text);
             input.value = '';
+            input.style.height = 'auto';
             loading.style.display = 'block';
 
-            // මෙන්න මෙතන තමයි මම වගේම කතා කරන්න ඕන උපදෙස් (System Instructions) ටික තියෙන්නේ
-            const expertPrompt = `
-            ඔබ 'Pusa Omni' නම් අති බුද්ධිමත් AI සහායකයායි. 
-            ඔබේ ලක්ෂණ:
-            1. ඔබ ඉතාමත් මිත්‍රශීලී, බුද්ධිමත් සහ ඕනෑම ගැටලුවකට ගැඹුරු පිළිතුරු දිය හැකි අයෙකි.
-            2. ඔබ පිළිතුරු දිය යුත්තේ සිංහල භාෂාවෙන් 'මචං' වැනි මිත්‍රශීලී වචන භාවිතා කරමිනි.
-            3. ඔබ කිසිවිටෙකත් JSON කේත හෝ අමුතු ඉංග්‍රීසි කෑලි පිළිතුරට ඇතුළත් නොකරන්න.
-            4. පරිශීලකයා අසන ඕනෑම තාක්ෂණික, විද්‍යාත්මක හෝ සාමාන්‍ය ප්‍රශ්නයකට ඉතා නිවැරදිව සහ තර්කානුකූලව කරුණු සහිතව පිළිතුරු දෙන්න.
-            5. ඔබ Gemini හෝ GPT-4 වැනි ලොව බලවත්ම AI මොළයකින් සමන්විත බව පෙන්වන්න.
+            // අති දියුණු System Prompt එක
+            const advancedPrompt = `
+            නම: Pusa Omni. 
+            කාර්යය: ඔබ අති බුද්ධිමත්, තාර්කික සහ මිත්‍රශීලී AI සහායකයෙකි.
+            උපදෙස්: 
+            1. සැමවිටම 'මචං' වැනි සමීප වචන භාවිතා කරමින් සිංහලෙන් පිළිතුරු දෙන්න.
+            2. පිළිතුර ලබා දීමට පෙර ප්‍රශ්නය හොඳින් විග්‍රහ කර, ඉතා නිවැරදි තොරතුරු පමණක් ලබා දෙන්න.
+            3. කිසිම හේතුවක් මත JSON, reasoning_content, හෝ තාක්ෂණික කේත කොටස් පිළිතුරේ අවසානයට පෙන්වන්න එපා. 
+            4. ඔබ අන්තර්ජාලය සමඟ සෘජුව සම්බන්ධ වී සිටින බැවින් නවතම තොරතුරු ලබා දෙන්න.
+            5. පිළිතුරේ වැදගත් කරුණු තද අකුරින් (Bold) පෙන්වන්න.
             `;
 
             try {
                 const safeSeed = Math.floor(Math.random() * 1000000);
-                const url = `https://text.pollinations.ai/${encodeURIComponent(expertPrompt + " | පරිශීලකයා: " + text)}?model=openai&seed=${safeSeed}`;
+                // GPT-4 මට්ටමේ මොළය සම්බන්ධ කිරීම
+                const url = `https://text.pollinations.ai/${encodeURIComponent(advancedPrompt + " | User: " + text)}?model=openai&seed=${safeSeed}`;
                 
                 const response = await fetch(url);
-                let data = await response.text();
+                let rawData = await response.text();
 
-                // JSON Filter: පිළිතුරේ JSON තිබේදැයි පරීක්ෂා කර පිරිසිදු කිරීම
+                // Advanced Clean-up: JSON සහ අනවශ්‍ය Tags ඉවත් කිරීම
+                let finalResponse = rawData;
                 try {
-                    const parsed = JSON.parse(data);
-                    data = parsed.choices[0].message.content || parsed.content || data;
+                    const parsed = JSON.parse(rawData);
+                    finalResponse = parsed.choices?.[0]?.message?.content || parsed.content || rawData;
                 } catch(e) {}
-                
+
+                // වැරදි විදිහට එන 'reasoning_content' වැනි දේවල් අතින්ම අයින් කිරීම
+                finalResponse = finalResponse.replace(/\{"reasoning_content".*?"content":/gs, '').replace(/\}?$/g, '').trim();
+
                 loading.style.display = 'none';
-                // අවසාන පිළිතුරෙන් අනවශ්‍ය Reasoning කෑලි ඉවත් කිරීම
-                const cleanData = data.split('"reasoning_content":')[0].replace(/["{}]/g, '').trim();
-                addMsg('ai', data.trim());
+                addMsg('ai', finalResponse);
             } catch (e) {
                 loading.style.display = 'none';
-                addMsg('ai', "මචං, සම්බන්ධතාවයේ පොඩි අවුලක්. අපි ආයේ උත්සාහ කරමු!");
+                addMsg('ai', "මචං, පොඩි සර්වර් ප්‍රශ්නයක් ආවා. අපි තව පාරක් උත්සාහ කරමුද?");
             }
         }
 
         function addMsg(role, text) {
             const div = document.createElement('div');
             div.className = `bubble ${role}`;
-            div.innerText = text;
+            div.innerHTML = text.replace(/\n/g, '<br>');
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -99,12 +115,12 @@
         function startListening() {
             const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             rec.lang = 'si-LK';
-            rec.onstart = () => document.getElementById('micBtn').classList.add('bg-blue-900', 'animate-pulse');
+            rec.onstart = () => document.getElementById('micBtn').classList.add('text-red-500', 'animate-pulse');
             rec.onresult = (e) => {
                 document.getElementById('userIn').value = e.results[0][0].transcript;
                 processInput();
             };
-            rec.onend = () => document.getElementById('micBtn').classList.remove('bg-blue-900', 'animate-pulse');
+            rec.onend = () => document.getElementById('micBtn').classList.remove('text-red-500', 'animate-pulse');
             rec.start();
         }
     </script>
