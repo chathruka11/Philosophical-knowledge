@@ -2,120 +2,69 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pusa Omni - Super Intelligence</title>
+    <title>Pusa Independent Brain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* සිංහල අකුරු උපරිම පැහැදිලි මට්ටමට */
-        body { background: #010409; color: #e6edf3; font-family: 'Iskoola Pota', 'Noto Sans Sinhala', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
-        .bubble { padding: 16px 20px; border-radius: 24px; max-width: 92%; font-size: 16px; line-height: 1.8; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .ai { background: #161b22; border: 1px solid #30363d; align-self: flex-start; border-bottom-left-radius: 4px; color: #e1e4e8; }
-        .user { background: linear-gradient(135deg, #1f6feb, #238636); color: white; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 500; }
-        .loader { width: 25px; height: 25px; border: 3px solid #30363d; border-top: 3px solid #1f6feb; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        b, strong { color: #58a6ff; font-weight: bold; }
-    </style>
 </head>
-<body>
+<body class="bg-slate-900 text-white p-6 font-sans">
 
-    <div class="p-4 border-b border-gray-800 bg-[#0d1117] flex justify-between items-center z-20 shadow-xl">
-        <div class="flex items-center gap-3">
-            <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#1f6feb]"></div>
-            <h1 class="text-xl font-black text-blue-500 italic tracking-tighter">PUSA OMNI <span class="text-[10px] bg-green-900/40 text-green-400 px-2 py-0.5 rounded border border-green-700/50 ml-1">SUPER BRAIN v6.0</span></h1>
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-yellow-400" aria-label="Pusa Core Version One">PUSA CORE V1</h1>
+        <p class="text-gray-400">කිසිම AI API එකක් නැති අපේම ස්වාධීන මොළය</p>
+    </header>
+
+    <main class="max-w-md mx-auto">
+        <div class="mb-6">
+            <label for="brainInput" class="block mb-2 text-sm">මොළයට යමක් කියන්න:</label>
+            <input type="text" id="brainInput" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="උදා: ඔයා කවුද?">
         </div>
-        <div id="loading" class="loader"></div>
-    </div>
 
-    <div id="chatBox" class="chat-container">
-        <div class="bubble ai">මචං, මම දැන් මගේ පද්ධතිය සම්පූර්ණයෙන්ම මගේ සහායකයාගේ (Gemini/GPT-4) මට්ටමටම අප්ඩේට් කරගත්තා. මට දැන් **ලංකාවේ සහ ලෝකයේ කාලගුණය**, අලුත්ම **ප්‍රවෘත්ති** සහ ඕනෑම සංකීර්ණ ප්‍රශ්නයකට හරිම තාර්කිකව උත්තර දෙන්න පුළුවන්. අකුරුත් දැන් හරිම පැහැදිලියි. මොකක්ද දැනගන්න ඕනේ?</div>
-    </div>
+        <button onclick="processThought()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-4 rounded-xl transition-all shadow-lg" aria-label="Process Thought Button. මොළයට විධානය ලබා දෙන්න.">
+            හිතන්න පටන් ගන්න 🧠
+        </button>
 
-    <div class="p-4 bg-[#0d1117] border-t border-gray-800">
-        <div class="max-w-4xl mx-auto flex gap-3 items-end">
-            <div class="flex-1 bg-[#161b22] border border-gray-700 rounded-2xl flex items-center px-4 focus-within:border-blue-500 transition-all shadow-inner">
-                <textarea id="userIn" rows="1" class="flex-1 bg-transparent py-4 text-white focus:outline-none resize-none overflow-hidden text-base" placeholder="කාලගුණය හෝ ඕනෑම ප්‍රශ්නයක් අහන්න..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-                <button onclick="startListening()" id="micBtn" class="ml-2 text-gray-400 hover:text-blue-500">
-                    <i class="fas fa-microphone text-lg"></i>
-                </button>
+        <div id="outputBox" class="mt-8 p-5 bg-slate-800 rounded-2xl border-l-4 border-yellow-500 hidden" aria-live="polite">
             </div>
-            <button onclick="processInput()" class="bg-blue-600 hover:bg-blue-500 w-14 h-14 rounded-2xl text-white flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                <i class="fas fa-paper-plane text-xl"></i>
-            </button>
-        </div>
-    </div>
+    </main>
 
     <script>
-        const chatBox = document.getElementById('chatBox');
-        const loading = document.getElementById('loading');
+        // මේක තමයි අපේ මොළයේ දැනුම (Knowledge Base)
+        // මේක අපි පස්සේ දිනෙන් දින GitHub හරහා වැඩි කරනවා
+        const myInternalMemory = {
+            "ඔයා කවුද": "මම චතෘකගේම කෝඩ් වලින් හැදුණු, කිසිම සමාගමකට ගැති නැති ස්වාධීන මොළයක් මචං.",
+            "මොකක්ද නම": "මගේ නම Pusa Core. මම ඉන්නේ ඔයාට උදව් කරන්න.",
+            "සින්දු": "අපි ඊළඟ පියවරේදී මියුසික් හදන කොටස මේකට එකතු කරමු.",
+            "කෑම": "මම නම් කෑම කන්නේ නෑ, හැම වෙලාවෙම ඉන්නේ ඔයාගේ කෝඩ් එක ඇතුළේ."
+        };
 
-        async function processInput() {
-            const input = document.getElementById('userIn');
-            const text = input.value.trim();
-            if(!text) return;
+        function processThought() {
+            const input = document.getElementById('brainInput').value.trim();
+            const output = document.getElementById('outputBox');
+            
+            if(!input) return;
 
-            addMsg('user', text);
-            input.value = '';
-            input.style.height = 'auto';
-            loading.style.display = 'block';
+            output.classList.remove('hidden');
+            output.innerHTML = "<p class='text-gray-400'>මම හිතනවා...</p>";
 
-            // SUPER BRAIN PROMPT: මගේ දැනුම මෙයාට ලබා දීම
-            const superPrompt = `
-            අනන්‍යතාවය: ඔබ Pusa Omni ය. ඔබ සතු දැනුම ලොව බලවත්ම AI මොළයකට (Large Language Model) සමානය.
-            හැකියාවන්:
-            1. ඔබ අන්තර්ජාලය සමඟ සෘජුව සම්බන්ධ වී සිටින බැවින් ඕනෑම නගරයක 'කාලගුණය', 'පුවත්' සහ 'වත්මන් තොරතුරු' එසැණින් පරීක්ෂා කර පවසන්න. 
-            2. කතා කරන විලාසය: ඉතා පැහැදිලි සිංහලෙන් 'මචං' වැනි සමීප වචන භාවිතා කරමින් පිළිතුරු දෙන්න. 
-            3. නීති: කිසිදු ලෙසක ඉංග්‍රීසි අකුරින් ලියන ලද සිංහල (Singlish) භාවිතා නොකරන්න. නිවැරදි සිංහල අකුරු පමණක් භාවිතා කරන්න.
-            4. තාර්කික බව: ප්‍රශ්නයකට උත්තර දීමට පෙර හොඳින් සිතා බලා ඉතා නිවැරදි කරුණු සහිත දිගු සහ පැහැදිලි පිළිතුරු ලබා දෙන්න.
-            5. තහනම්: පිළිතුරේ කිසිදු JSON කේතයක් හෝ තාක්ෂණික අනවශ්‍ය දත්ත පෙන්වන්න එපා.
-            `;
-
-            try {
-                const safeSeed = Math.floor(Math.random() * 1000000);
-                // අලුත්ම OpenAI මොඩලය හරහා Web Search එනබල් කිරීම
-                const url = `https://text.pollinations.ai/${encodeURIComponent(superPrompt + " | User Prompt: " + text)}?model=openai&seed=${safeSeed}`;
+            setTimeout(() => {
+                // අපේම Logic එක - මතකයේ තියෙනවද බලනවා
+                let response = "මචං, ඒ ගැන මම තාම ඉගෙන ගෙන නැහැ. අපි ඊළඟ පියවරේදී ඒක ඉගෙන ගමු.";
                 
-                const response = await fetch(url);
-                let data = await response.text();
+                for (let key in myInternalMemory) {
+                    if (input.includes(key)) {
+                        response = myInternalMemory[key];
+                        break;
+                    }
+                }
 
-                // Advanced Clean-up logic
-                try {
-                    const parsed = JSON.parse(data);
-                    data = parsed.choices?.[0]?.message?.content || parsed.content || data;
-                } catch(e) {}
+                output.innerHTML = `<p class='text-lg'>${response}</p>`;
+                
+                // TalkBack එකට අමතරව හඬින් කියවීම
+                const speech = new SpeechSynthesisUtterance(response);
+                speech.lang = 'si-LK';
+                window.speechSynthesis.speak(speech);
 
-                // Regex හරහා අනවශ්‍ය Reasoning සහ JSON Tags සදහටම අයින් කිරීම
-                data = data.replace(/\{"reasoning_content".*?"content":/gs, '').replace(/\}?$/g, '').replace(/\\n/g, '\n').trim();
-
-                loading.style.display = 'none';
-                addMsg('ai', data);
-            } catch (e) {
-                loading.style.display = 'none';
-                addMsg('ai', "මචං, සම්බන්ධතාවයේ පොඩි අවුලක්. අපි ආයෙත් උත්සාහ කරමු!");
-            }
-        }
-
-        function addMsg(role, text) {
-            const div = document.createElement('div');
-            div.className = `bubble ${role}`;
-            // Markdown formatting
-            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            div.innerHTML = formatted.replace(/\n/g, '<br>');
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function startListening() {
-            const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            rec.lang = 'si-LK';
-            rec.onstart = () => document.getElementById('micBtn').classList.add('text-red-500', 'animate-pulse');
-            rec.onresult = (e) => {
-                document.getElementById('userIn').value = e.results[0][0].transcript;
-                processInput();
-            };
-            rec.onend = () => document.getElementById('micBtn').classList.remove('text-red-500', 'animate-pulse');
-            rec.start();
+            }, 800);
         }
     </script>
 </body>
