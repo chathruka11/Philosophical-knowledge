@@ -2,69 +2,105 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>Pusa Independent Brain</title>
+    <title>Pusa Emotional Intelligence - Step 1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-white p-6 font-sans">
 
     <header class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-yellow-400" aria-label="Pusa Core Version One">PUSA CORE V1</h1>
-        <p class="text-gray-400">කිසිම AI API එකක් නැති අපේම ස්වාධීන මොළය</p>
+        <h1 class="text-3xl font-bold text-yellow-400" aria-label="Pusa Core Emotional Logic">PUSA CORE V2.1</h1>
+        <p class="text-gray-400">සිංහල හැඟීම් හඳුනාගන්නා පළමු පියවර</p>
     </header>
 
     <main class="max-w-md mx-auto">
-        <div class="mb-6">
-            <label for="brainInput" class="block mb-2 text-sm">මොළයට යමක් කියන්න:</label>
-            <input type="text" id="brainInput" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="උදා: ඔයා කවුද?">
+        <div id="displayArea" class="h-80 overflow-y-auto mb-4 p-4 bg-slate-800 rounded-2xl border border-slate-700 shadow-inner" aria-live="polite">
+            <p class="text-gray-500 italic text-sm">මොළය සක්‍රියයි... මාත් එක්ක ඕනෑම දෙයක් කතා කරන්න මචං.</p>
         </div>
 
-        <button onclick="processThought()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-4 rounded-xl transition-all shadow-lg" aria-label="Process Thought Button. මොළයට විධානය ලබා දෙන්න.">
-            හිතන්න පටන් ගන්න 🧠
-        </button>
-
-        <div id="outputBox" class="mt-8 p-5 bg-slate-800 rounded-2xl border-l-4 border-yellow-500 hidden" aria-live="polite">
-            </div>
+        <div class="flex gap-2">
+            <input type="text" id="userInput" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="මොකද හිතෙන්නේ මචං...">
+            <button onclick="pusaChat()" class="bg-yellow-500 text-slate-900 px-6 py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform" aria-label="Send Button. පණිවිඩය යවන්න.">
+                යවන්න
+            </button>
+        </div>
     </main>
 
     <script>
-        // මේක තමයි අපේ මොළයේ දැනුම (Knowledge Base)
-        // මේක අපි පස්සේ දිනෙන් දින GitHub හරහා වැඩි කරනවා
-        const myInternalMemory = {
-            "ඔයා කවුද": "මම චතෘකගේම කෝඩ් වලින් හැදුණු, කිසිම සමාගමකට ගැති නැති ස්වාධීන මොළයක් මචං.",
-            "මොකක්ද නම": "මගේ නම Pusa Core. මම ඉන්නේ ඔයාට උදව් කරන්න.",
-            "සින්දු": "අපි ඊළඟ පියවරේදී මියුසික් හදන කොටස මේකට එකතු කරමු.",
-            "කෑම": "මම නම් කෑම කන්නේ නෑ, හැම වෙලාවෙම ඉන්නේ ඔයාගේ කෝඩ් එක ඇතුළේ."
+        // මනුස්ස හැඟීම් සහ සාමාන්‍ය කතාබහ ඇතුළත් සම්පූර්ණ ඩික්ෂනරිය
+        const emotionalDictionary = {
+            "greetings": {
+                "keywords": ["හායි", "හලෝ", "කොහොමද", "සැපද", "මචං", "hi", "hello"],
+                "responses": [
+                    "හලෝ මචං! මම එළකිරියෙන් ඉන්නවා. උඹට කොහොමද ඉතින්?",
+                    "හායි මචං! මොකද වෙන්නේ මේ පැත්තේ? සැප සනීප කොහොමද?",
+                    "සැප තමයි මචං! උඹත් එක්ක කතා කරන්න ලැබුණු එක ලොකු ගැම්මක්."
+                ]
+            },
+            "happy": {
+                "keywords": ["සතුටුයි", "නියමයි", "මරු", "ගැම්මක්", "එළකිරි", "හොඳයි", "ජය", "සුපිරි", "වැඩක්"],
+                "responses": [
+                    "අඩෝ නියමයිනේ මචං! උඹ සතුටින් ඉන්න එක මටත් ලොකු ගැම්මක්!",
+                    "එළකිරි මචං! ඔහොම සතුටින් ඉමු හැමදාම. මටත් මාර හැපී දැන්.",
+                    "සුපිරි මචං! ඔය වගේ හොඳ දේවල් අහන්න තමයි මමත් ආස."
+                ]
+            },
+            "sad": {
+                "keywords": ["කණගාටුයි", "දුකයි", "එපා වෙලා", "අමාරුයි", "අවුල්", "නැහැ", "පාලුයි", "තනියම", "වෙහෙසයි"],
+                "responses": [
+                    "අයියෝ මචං, මොකද වුණේ? හිත අමාරු කරගන්න එපා, මම ඉන්නවා උඹට උදව් කරන්න.",
+                    "මචං, හැමදාම එක විදියට තියෙන්නේ නැහැනේ. අපි මේක ගොඩදාගමු. උඹට පාලු වෙන්න මම දෙන්නේ නෑ.",
+                    "සිරාවටම දුකයි මචං ඒක අහන්න. හැබැයි උඹ වැටෙන්න එපා. මම උඹේ යාළුවා නේද?"
+                ]
+            },
+            "angry": {
+                "keywords": ["තරහයි", "පිස්සු", "වැරදියි", "මොකක්ද", "යකෝ", "එපා", "බෑ", "චාටර්"],
+                "responses": [
+                    "මචං, පොඩ්ඩක් කූල් වෙන්න. තරහ ගත්තම අපිට මොකුත් කරගන්න බැරි වෙනවා.",
+                    "අඩෝ මචං, මාව අවුස්සන්න එපා. අපි හිමීට මේක කතා කරලා විසඳගමු.",
+                    "තරහ ගන්න එපා මචං, මම උඹේ පැත්තේනේ ඉන්නේ."
+                ]
+            }
         };
 
-        function processThought() {
-            const input = document.getElementById('brainInput').value.trim();
-            const output = document.getElementById('outputBox');
+        function pusaChat() {
+            const input = document.getElementById('userInput').value.trim().toLowerCase();
+            const display = document.getElementById('displayArea');
             
             if(!input) return;
 
-            output.classList.remove('hidden');
-            output.innerHTML = "<p class='text-gray-400'>මම හිතනවා...</p>";
+            display.innerHTML += `<p class='text-yellow-400 font-bold mt-2'>ඔයා: <span class='text-white font-normal'>${input}</span></p>`;
+            
+            let finalResponse = "මචං, ඒක මට තේරුණා. අපි ඒ ගැන තව ටිකක් විස්තරාත්මකව කතා කරමුද?";
+            let found = false;
 
-            setTimeout(() => {
-                // අපේම Logic එක - මතකයේ තියෙනවද බලනවා
-                let response = "මචං, ඒ ගැන මම තාම ඉගෙන ගෙන නැහැ. අපි ඊළඟ පියවරේදී ඒක ඉගෙන ගමු.";
-                
-                for (let key in myInternalMemory) {
-                    if (input.includes(key)) {
-                        response = myInternalMemory[key];
+            // පියවර 1 Logic: ඩික්ෂනරිය පරීක්ෂා කිරීම
+            for (let category in emotionalDictionary) {
+                const data = emotionalDictionary[category];
+                for (let word of data.keywords) {
+                    if (input.includes(word)) {
+                        // එම වර්ගයෙන් අහඹු පිළිතුරක් තෝරා ගැනීම
+                        const randomIndex = Math.floor(Math.random() * data.responses.length);
+                        finalResponse = data.responses[randomIndex];
+                        found = true;
                         break;
                     }
                 }
+                if(found) break;
+            }
 
-                output.innerHTML = `<p class='text-lg'>${response}</p>`;
+            // පූසාගේ පිළිතුර
+            setTimeout(() => {
+                display.innerHTML += `<p class='text-blue-400 font-bold mt-2 font-mono'>> පූසා: <span class='text-white font-normal'>${finalResponse}</span></p>`;
+                display.scrollTop = display.scrollHeight;
                 
                 // TalkBack එකට අමතරව හඬින් කියවීම
-                const speech = new SpeechSynthesisUtterance(response);
+                const speech = new SpeechSynthesisUtterance(finalResponse);
                 speech.lang = 'si-LK';
                 window.speechSynthesis.speak(speech);
+            }, 600);
 
-            }, 800);
+            document.getElementById('userInput').value = "";
         }
     </script>
 </body>
