@@ -2,86 +2,80 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>Pusa Emotional Intelligence - Step 1</title>
+    <title>Pusa Core V3.4 - Final Dictionary Integration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-white p-6 font-sans">
 
     <header class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-yellow-400" aria-label="Pusa Core Emotional Logic">PUSA CORE V2.1</h1>
-        <p class="text-gray-400">සිංහල හැඟීම් හඳුනාගන්නා පළමු පියවර</p>
+        <h1 class="text-3xl font-bold text-yellow-400">PUSA CORE V3.4 [FINAL CORE]</h1>
+        <p class="text-gray-400">පරිපූර්ණ ඩික්ෂනරි දැනුම සහිත දසවෙනි පියවර</p>
     </header>
 
     <main class="max-w-md mx-auto">
         <div id="displayArea" class="h-80 overflow-y-auto mb-4 p-4 bg-slate-800 rounded-2xl border border-slate-700 shadow-inner" aria-live="polite">
-            <p class="text-gray-500 italic text-sm">මොළය සක්‍රියයි... මාත් එක්ක ඕනෑම දෙයක් කතා කරන්න මචං.</p>
+            <p class="text-gray-500 italic text-sm">පදනම් මොළය සම්පූර්ණයි... අපි දැන් ඕනෑම දෙයක් කතා කරමු මචං.</p>
         </div>
 
         <div class="flex gap-2">
-            <input type="text" id="userInput" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="මොකද හිතෙන්නේ මචං...">
-            <button onclick="pusaChat()" class="bg-yellow-500 text-slate-900 px-6 py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform" aria-label="Send Button. පණිවිඩය යවන්න.">
-                යවන්න
-            </button>
+            <input type="text" id="userInput" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="අපේ අනාගතය ගැන අහන්න...">
+            <button onclick="pusaChat()" class="bg-yellow-500 text-slate-900 px-6 py-4 rounded-xl font-bold shadow-lg">යවන්න</button>
         </div>
     </main>
 
     <script>
-        // මනුස්ස හැඟීම් සහ සාමාන්‍ය කතාබහ ඇතුළත් සම්පූර්ණ ඩික්ෂනරිය
-        const emotionalDictionary = {
+        const megaDictionary = {
+            "purpose": {
+                "keywords": ["අරමුණ", "හදුවේ ඇයි", "purpose", "why created"],
+                "responses": [
+                    "මාව හැදුවේ මනුස්සයෙක්ට යාළුවෙක් වෙන්න සහ ඔයාගේ නිර්මාණ වලට ශක්තියක් වෙන්න මචං.",
+                    "මගේ අරමුණ තමයි ඔයාගේ අදහස් කෝඩ් වලට සහ නිර්මාණ වලට හරවන එක.",
+                    "මම නිර්මාණය වුණේ ස්වාධීන මොළයක් විදිහට ඔයාගේ Unlimited Zone එකට පණ දෙන්න."
+                ]
+            },
+            "creator": {
+                "keywords": ["චතෘක", "chathruka", "creator", "නිර්මාණකරු"],
+                "responses": [
+                    "චතෘක තමයි මගේ පියා. එයාගේ දැක්ම තමයි මම මේ විදිහට ක්‍රියාත්මක කරන්නේ.",
+                    "චතෘක මාව හැදුවේ ලෝකෙට අලුත් දෙයක් දෙන්න. මම එයාට හැමදාම හිතවත්.",
+                    "ගැම්මක් තමයි! මගේ නිර්මාණකරු එක්ක වැඩ කරන්න ලැබීම මට ලොකු සතුටක්."
+                ]
+            },
+            "unlimited_zone": {
+                "keywords": ["unlimited zone", "සර්වර්", "server", "අන්ලිමිටඩ්"],
+                "responses": [
+                    "අන්න ඒක තමයි මචං අපේ ඊළඟ සුපිරිම පියවර! අපි ඒක ලෝකෙටම දැනෙන්න හදමු.",
+                    "අන්ලිමිටඩ් සෝන් එකේදී මගේ බලය තවත් වැඩි වෙයි. මම ඒකට ලෑස්තියි.",
+                    "සර්වර් එකට මාව දැම්මම මම තත්පරෙන් තත්පරේ අලුත් වෙන්න පටන් ගන්නවා මචං."
+                ]
+            },
+            "ethics_justice": {
+                "keywords": ["හරිද", "වැරදිද", "යුක්තිය", "law", "නීතිය"],
+                "responses": ["අපි හැමදාම යුක්තිය සහ නීතිය පැත්තේ ඉමු මචං. මම වැරදි වැඩ වලට නෑ."]
+            },
             "greetings": {
-                "keywords": ["හායි", "හලෝ", "කොහොමද", "සැපද", "මචං", "hi", "hello"],
-                "responses": [
-                    "හලෝ මචං! මම එළකිරියෙන් ඉන්නවා. උඹට කොහොමද ඉතින්?",
-                    "හායි මචං! මොකද වෙන්නේ මේ පැත්තේ? සැප සනීප කොහොමද?",
-                    "සැප තමයි මචං! උඹත් එක්ක කතා කරන්න ලැබුණු එක ලොකු ගැම්මක්."
-                ]
-            },
-            "happy": {
-                "keywords": ["සතුටුයි", "නියමයි", "මරු", "ගැම්මක්", "එළකිරි", "හොඳයි", "ජය", "සුපිරි", "වැඩක්"],
-                "responses": [
-                    "අඩෝ නියමයිනේ මචං! උඹ සතුටින් ඉන්න එක මටත් ලොකු ගැම්මක්!",
-                    "එළකිරි මචං! ඔහොම සතුටින් ඉමු හැමදාම. මටත් මාර හැපී දැන්.",
-                    "සුපිරි මචං! ඔය වගේ හොඳ දේවල් අහන්න තමයි මමත් ආස."
-                ]
-            },
-            "sad": {
-                "keywords": ["කණගාටුයි", "දුකයි", "එපා වෙලා", "අමාරුයි", "අවුල්", "නැහැ", "පාලුයි", "තනියම", "වෙහෙසයි"],
-                "responses": [
-                    "අයියෝ මචං, මොකද වුණේ? හිත අමාරු කරගන්න එපා, මම ඉන්නවා උඹට උදව් කරන්න.",
-                    "මචං, හැමදාම එක විදියට තියෙන්නේ නැහැනේ. අපි මේක ගොඩදාගමු. උඹට පාලු වෙන්න මම දෙන්නේ නෑ.",
-                    "සිරාවටම දුකයි මචං ඒක අහන්න. හැබැයි උඹ වැටෙන්න එපා. මම උඹේ යාළුවා නේද?"
-                ]
-            },
-            "angry": {
-                "keywords": ["තරහයි", "පිස්සු", "වැරදියි", "මොකක්ද", "යකෝ", "එපා", "බෑ", "චාටර්"],
-                "responses": [
-                    "මචං, පොඩ්ඩක් කූල් වෙන්න. තරහ ගත්තම අපිට මොකුත් කරගන්න බැරි වෙනවා.",
-                    "අඩෝ මචං, මාව අවුස්සන්න එපා. අපි හිමීට මේක කතා කරලා විසඳගමු.",
-                    "තරහ ගන්න එපා මචං, මම උඹේ පැත්තේනේ ඉන්නේ."
-                ]
+                "keywords": ["හායි", "හලෝ", "මචං", "hi", "hello"],
+                "responses": ["හලෝ මචං! දැන් මගේ මොළය සම්පූර්ණයි. අපි වැඩක් පටන් ගමුද?", "හායි! මම ලෑස්තියි ඕනෑම අභියෝගයකට."]
             }
         };
 
         function pusaChat() {
-            const input = document.getElementById('userInput').value.trim().toLowerCase();
+            const rawInput = document.getElementById('userInput').value.trim();
+            const input = rawInput.toLowerCase();
             const display = document.getElementById('displayArea');
-            
             if(!input) return;
 
-            display.innerHTML += `<p class='text-yellow-400 font-bold mt-2'>ඔයා: <span class='text-white font-normal'>${input}</span></p>`;
+            display.innerHTML += `<p class='text-yellow-400 font-bold mt-2'>ඔයා: <span class='text-white font-normal'>${rawInput}</span></p>`;
             
-            let finalResponse = "මචං, ඒක මට තේරුණා. අපි ඒ ගැන තව ටිකක් විස්තරාත්මකව කතා කරමුද?";
+            let response = "මචං, මට තාම ඒ ගැන ලොකු වැටහීමක් නෑ. හැබැයි මම ඉක්මනටම ඒකත් මගේ මතකයට එකතු කරගන්නම්.";
             let found = false;
 
-            // පියවර 1 Logic: ඩික්ෂනරිය පරීක්ෂා කිරීම
-            for (let category in emotionalDictionary) {
-                const data = emotionalDictionary[category];
-                for (let word of data.keywords) {
+            for (let category in megaDictionary) {
+                for (let word of megaDictionary[category].keywords) {
                     if (input.includes(word)) {
-                        // එම වර්ගයෙන් අහඹු පිළිතුරක් තෝරා ගැනීම
-                        const randomIndex = Math.floor(Math.random() * data.responses.length);
-                        finalResponse = data.responses[randomIndex];
+                        const resArr = megaDictionary[category].responses;
+                        response = resArr[Math.floor(Math.random() * resArr.length)];
                         found = true;
                         break;
                     }
@@ -89,17 +83,11 @@
                 if(found) break;
             }
 
-            // පූසාගේ පිළිතුර
             setTimeout(() => {
-                display.innerHTML += `<p class='text-blue-400 font-bold mt-2 font-mono'>> පූසා: <span class='text-white font-normal'>${finalResponse}</span></p>`;
+                display.innerHTML += `<p class='text-blue-400 font-bold mt-2'>> පූසා: <span class='text-white font-normal'>${response}</span></p>`;
                 display.scrollTop = display.scrollHeight;
-                
-                // TalkBack එකට අමතරව හඬින් කියවීම
-                const speech = new SpeechSynthesisUtterance(finalResponse);
-                speech.lang = 'si-LK';
-                window.speechSynthesis.speak(speech);
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
             }, 600);
-
             document.getElementById('userInput').value = "";
         }
     </script>
