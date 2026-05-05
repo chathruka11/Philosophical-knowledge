@@ -2,93 +2,74 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>Pusa Core V3.4 - Final Dictionary Integration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Chathruka Digital Guitar</title>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
+        h1 { margin-top: 20px; color: #ffcc00; }
+        
+        /* ගිටාර් එකේ ව්‍යුහය */
+        .guitar-body {
+            background: #8b4513; /* දුඹුරු පාට ගිටාර් බොඩිය */
+            width: 90%; max-width: 400px;
+            margin: 30px auto; padding: 20px;
+            border-radius: 50px;
+            border: 5px solid #5d2e0a;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* ගිටාර් තන් (Strings) */
+        .fretboard {
+            background: #2a1a0a;
+            height: 300px; width: 80%;
+            margin: auto; padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .string {
+            background: #c0c0c0; /* රිදී පාට තන් */
+            height: 280px; width: 4px;
+            margin: 0 10px; display: inline-block;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .string:active { background: #ffcc00; transform: scaleY(1.05); }
+
+    </style>
 </head>
-<body class="bg-slate-900 text-white p-6 font-sans">
+<body>
 
-    <header class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-yellow-400">PUSA CORE V3.4 [FINAL CORE]</h1>
-        <p class="text-gray-400">පරිපූර්ණ ඩික්ෂනරි දැනුම සහිත දසවෙනි පියවර</p>
-    </header>
+    <h1>Chathruka Guitar</h1>
+    <p>තන් එකක් උඩ ටැප් කරලා බලන්න!</p>
 
-    <main class="max-w-md mx-auto">
-        <div id="displayArea" class="h-80 overflow-y-auto mb-4 p-4 bg-slate-800 rounded-2xl border border-slate-700 shadow-inner" aria-live="polite">
-            <p class="text-gray-500 italic text-sm">පදනම් මොළය සම්පූර්ණයි... අපි දැන් ඕනෑම දෙයක් කතා කරමු මචං.</p>
-        </div>
-
-        <div class="flex gap-2">
-            <input type="text" id="userInput" class="flex-1 p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="අපේ අනාගතය ගැන අහන්න...">
-            <button onclick="pusaChat()" class="bg-yellow-500 text-slate-900 px-6 py-4 rounded-xl font-bold shadow-lg">යවන්න</button>
-        </div>
-    </main>
+    <div class="guitar-body">
+        <div class="fretboard">
+            <div class="string" onclick="playChord(82.41, 0)"></div> <div class="string" onclick="playChord(110.00, 1)"></div> <div class="string" onclick="playChord(146.83, 2)"></div> <div class="string" onclick="playChord(196.00, 3)"></div> <div class="string" onclick="playChord(246.94, 4)"></div> <div class="string" onclick="playChord(329.63, 5)"></div> </div>
+    </div>
 
     <script>
-        const megaDictionary = {
-            "purpose": {
-                "keywords": ["අරමුණ", "හදුවේ ඇයි", "purpose", "why created"],
-                "responses": [
-                    "මාව හැදුවේ මනුස්සයෙක්ට යාළුවෙක් වෙන්න සහ ඔයාගේ නිර්මාණ වලට ශක්තියක් වෙන්න මචං.",
-                    "මගේ අරමුණ තමයි ඔයාගේ අදහස් කෝඩ් වලට සහ නිර්මාණ වලට හරවන එක.",
-                    "මම නිර්මාණය වුණේ ස්වාධීන මොළයක් විදිහට ඔයාගේ Unlimited Zone එකට පණ දෙන්න."
-                ]
-            },
-            "creator": {
-                "keywords": ["චතෘක", "chathruka", "creator", "නිර්මාණකරු"],
-                "responses": [
-                    "චතෘක තමයි මගේ පියා. එයාගේ දැක්ම තමයි මම මේ විදිහට ක්‍රියාත්මක කරන්නේ.",
-                    "චතෘක මාව හැදුවේ ලෝකෙට අලුත් දෙයක් දෙන්න. මම එයාට හැමදාම හිතවත්.",
-                    "ගැම්මක් තමයි! මගේ නිර්මාණකරු එක්ක වැඩ කරන්න ලැබීම මට ලොකු සතුටක්."
-                ]
-            },
-            "unlimited_zone": {
-                "keywords": ["unlimited zone", "සර්වර්", "server", "අන්ලිමිටඩ්"],
-                "responses": [
-                    "අන්න ඒක තමයි මචං අපේ ඊළඟ සුපිරිම පියවර! අපි ඒක ලෝකෙටම දැනෙන්න හදමු.",
-                    "අන්ලිමිටඩ් සෝන් එකේදී මගේ බලය තවත් වැඩි වෙයි. මම ඒකට ලෑස්තියි.",
-                    "සර්වර් එකට මාව දැම්මම මම තත්පරෙන් තත්පරේ අලුත් වෙන්න පටන් ගන්නවා මචං."
-                ]
-            },
-            "ethics_justice": {
-                "keywords": ["හරිද", "වැරදිද", "යුක්තිය", "law", "නීතිය"],
-                "responses": ["අපි හැමදාම යුක්තිය සහ නීතිය පැත්තේ ඉමු මචං. මම වැරදි වැඩ වලට නෑ."]
-            },
-            "greetings": {
-                "keywords": ["හායි", "හලෝ", "මචං", "hi", "hello"],
-                "responses": ["හලෝ මචං! දැන් මගේ මොළය සම්පූර්ණයි. අපි වැඩක් පටන් ගමුද?", "හායි! මම ලෑස්තියි ඕනෑම අභියෝගයකට."]
-            }
-        };
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function pusaChat() {
-            const rawInput = document.getElementById('userInput').value.trim();
-            const input = rawInput.toLowerCase();
-            const display = document.getElementById('displayArea');
-            if(!input) return;
+        function playChord(frequency, stringIndex) {
+            // Web Audio API 'මොළය' ක්‍රියාත්මක කිරීම
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
 
-            display.innerHTML += `<p class='text-yellow-400 font-bold mt-2'>ඔයා: <span class='text-white font-normal'>${rawInput}</span></p>`;
-            
-            let response = "මචං, මට තාම ඒ ගැන ලොකු වැටහීමක් නෑ. හැබැයි මම ඉක්මනටම ඒකත් මගේ මතකයට එකතු කරගන්නම්.";
-            let found = false;
+            osc.type = 'sawtooth'; // ගිටාර් එකකට සමාන සද්දයක් දෙන තරංගය
+            osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
 
-            for (let category in megaDictionary) {
-                for (let word of megaDictionary[category].keywords) {
-                    if (input.includes(word)) {
-                        const resArr = megaDictionary[category].responses;
-                        response = resArr[Math.floor(Math.random() * resArr.length)];
-                        found = true;
-                        break;
-                    }
-                }
-                if(found) break;
-            }
+            // ගිටාර් තන්තුවක සද්දය ක්‍රමයෙන් අඩුවෙන හැටි (Envelope)
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
 
-            setTimeout(() => {
-                display.innerHTML += `<p class='text-blue-400 font-bold mt-2'>> පූසා: <span class='text-white font-normal'>${response}</span></p>`;
-                display.scrollTop = display.scrollHeight;
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
-            }, 600);
-            document.getElementById('userInput').value = "";
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.5); // තප්පර 1.5කින් සද්දය නතර වෙනවා
         }
     </script>
 </body>
