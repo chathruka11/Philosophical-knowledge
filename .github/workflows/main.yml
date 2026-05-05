@@ -1,0 +1,27 @@
+name: Brain Update Action
+on:
+  schedule:
+    - cron: '0 0 * * *' # හැමදාම රෑ 12ට මේක ඔටෝම වැඩ කරනවා
+  workflow_dispatch: # ඔයාට ඕන වෙලාවට අතින් රන් කරන්නත් පුළුවන්
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Tools
+        run: pip install requests beautifulsoup4
+      - name: Run Brain Update
+        run: python brain_updater.py
+      - name: Save Changes
+        run: |
+          git config --global user.name "Pusa-Bot"
+          git config --global user.email "bot@pusa.com"
+          git add index.html
+          git commit -m "මචං, මම අද නිවුස් ටික මොළයට එකතු කළා!"
+          git push
